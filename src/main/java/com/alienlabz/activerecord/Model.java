@@ -1,19 +1,17 @@
 /*
- * AlienDroid Framework - ActiveRecord Module.
- * Copyright (C) 2012 AlienLabZ
+ *  Copyright 2012 AlienLabZ
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package com.alienlabz.activerecord;
 
@@ -26,17 +24,19 @@ import java.util.Map;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.alienlabz.annotation.Transient;
 import com.alienlabz.util.Beans;
 import com.alienlabz.util.Reflection;
 
 /**
- * All "Model" classes must inherit from this abstract class.<br/>
+ * Base class for models.</br>
  * 
  * @author Marlon Silva Carvalho
+ * @author Rodrigo Hjort
  * @since 1.0.0
  */
 abstract public class Model {
-	
+
 	public Integer _id;
 
 	public Model() {
@@ -45,26 +45,24 @@ abstract public class Model {
 
 	public Model(final Integer id) {
 		this._id = id;
-		//TODO: verificar esse comportamento
-		//load(id);
 	}
 
 	private String getTableName() {
 		return Reflection.getSimpleClassName(this);
 	}
-	
+
 	private DBOpenHelper getHelper() {
 		return Beans.getBean(DBOpenHelper.class);
 	}
-	
+
 	private ColumnMapper getColumnMapper() {
 		return Beans.getBean(ColumnMapper.class);
 	}
-	
+
 	public void load(final Integer id) {
 		final Cursor cursor = getHelper().getReadableDatabase().query(getTableName(),
-				Reflection.getNonStaticDeclaredFieldsNames(this.getClass()),
-				"_id=?", new String[] { id.toString() }, null, null, null);
+				Reflection.getNonStaticDeclaredFieldsNames(this.getClass()), "_id=?", new String[] { id.toString() },
+				null, null, null);
 		if (cursor.moveToFirst()) {
 			transform(cursor);
 		}
@@ -106,8 +104,7 @@ abstract public class Model {
 		final String tableName = getTableName();
 		final DBOpenHelper helper = getHelper();
 		if (_id != null) {
-			helper.getWritableDatabase().update(tableName, values, "_id=?",
-					new String[] { _id.toString() });
+			helper.getWritableDatabase().update(tableName, values, "_id=?", new String[] { _id.toString() });
 		} else {
 			helper.getWritableDatabase().insertOrThrow(tableName, null, values);
 		}
@@ -127,14 +124,14 @@ abstract public class Model {
 	 */
 	protected void transform(final Cursor cursor) {
 		final ColumnMapper mapper = getColumnMapper();
-		
+
 		final Field[] fields = Reflection.getNonStaticDeclaredFields(this.getClass());
 		for (Field field : fields) {
-			if (!isMultiValued(field)) {
+			if (!isMultiValued(field) && !field.isAnnotationPresent(Transient.class)) {
 				mapper.setValueToObject(cursor, field, this);
 			}
 		}
-		
+
 		final int posId = cursor.getColumnIndex("_id");
 		if (posId != -1) {
 			this._id = cursor.getInt(posId);
@@ -149,7 +146,7 @@ abstract public class Model {
 	public boolean isSaved() {
 		return this._id != null;
 	}
-	
+
 	/**
 	 * Returns all occurrencies of the given class type.
 	 * 
@@ -161,7 +158,7 @@ abstract public class Model {
 	}
 
 	public static <T extends Model> List<T> where(final Class<T> cls, final String query, final String... params) {
-		
+
 		final String tableName = Reflection.getSimpleClassName(cls);
 		final List<T> result = new ArrayList<T>();
 
@@ -172,7 +169,7 @@ abstract public class Model {
 			sql.append(" WHERE ");
 			sql.append(query);
 		}
-		
+
 		final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
 		final Cursor cursor = helper.getReadableDatabase().rawQuery(sql.toString(), params);
 		while (cursor.moveToNext()) {
@@ -196,7 +193,7 @@ abstract public class Model {
 	}
 
 	public static <T extends Model> int count(final Class<T> cls, final String query, final String... params) {
-		
+
 		final String tableName = Reflection.getSimpleClassName(cls);
 		int result = 0;
 
@@ -207,13 +204,13 @@ abstract public class Model {
 			sql.append(" WHERE ");
 			sql.append(query);
 		}
-		
+
 		final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
 		final Cursor cursor = helper.getReadableDatabase().rawQuery(sql.toString(), params);
 		if (cursor.moveToNext()) {
 			result = cursor.getInt(0);
 		}
-		
+
 		cursor.close();
 		return result;
 	}
@@ -225,17 +222,17 @@ abstract public class Model {
 	 * @return	the statement
 	 */
 	public static String getSQLCreateTable(final Class<?> cls) {
-		
+
 		final String tableName = Reflection.getSimpleClassName(cls);
 		final StringBuilder sql = new StringBuilder();
-		
+
 		sql.append("CREATE TABLE ");
 		sql.append(tableName);
 		sql.append(" (_id INTEGER PRIMARY KEY");
-		
+
 		final Field[] fields = Reflection.getNonStaticDeclaredFields(cls);
 		for (Field field : fields) {
-			if (isMultiValued(field)) {
+			if (isMultiValued(field) || field.isAnnotationPresent(Transient.class)) {
 				continue;
 			}
 			sql.append(", ");
@@ -244,7 +241,7 @@ abstract public class Model {
 			sql.append(getType(field));
 		}
 		sql.append(");");
-		
+
 		return sql.toString();
 	}
 
@@ -256,21 +253,14 @@ abstract public class Model {
 	 */
 	private static String getType(final Field field) {
 		final String cls = field.getType().getSimpleName().toLowerCase();
-		
+
 		String type = null;
-		if (cls.equals("string")
-			|| cls.equals("char")
-			|| cls.equals("character")) {
+		if (cls.equals("string") || cls.equals("char") || cls.equals("character")) {
 			type = "TEXT";
-		} else if (cls.equals("integer")
-			|| cls.equals("int")
-			|| cls.equals("long")
-			|| cls.equals("short")
-			|| cls.equals("byte")
-			|| cls.equals("boolean")) {
+		} else if (cls.equals("integer") || cls.equals("int") || cls.equals("long") || cls.equals("short")
+				|| cls.equals("byte") || cls.equals("boolean")) {
 			type = "INTEGER";
-		} else if (cls.equals("double")
-				|| cls.equals("float")) {
+		} else if (cls.equals("double") || cls.equals("float")) {
 			type = "REAL";
 		} else if (cls.equals("date")) {
 			type = "DATE";
@@ -279,7 +269,7 @@ abstract public class Model {
 		} else {
 			type = "TEXT";
 		}
-		
+
 		return type;
 	}
 
@@ -296,7 +286,7 @@ abstract public class Model {
 			return true;
 		return false;
 	}
-	
+
 	/**
 	 * Returns true whether the given field type is an array.
 	 * 
@@ -316,7 +306,7 @@ abstract public class Model {
 	private static boolean isMultiValued(final Field field) {
 		return isCollection(field) || isArray(field);
 	}
-	
+
 	/**
 	 * Issues a given native SQL query, returning a list of a given class type instances. 
 	 * 
@@ -347,7 +337,7 @@ abstract public class Model {
 	 * @param sql	the SQL statement
 	 * @param params	optional arguments
 	 */
-	public static void executeSQL(final String sql, final Object ... params) {
+	public static void executeSQL(final String sql, final Object... params) {
 		final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
 		if (params != null && params.length > 0) {
 			helper.getReadableDatabase().execSQL(sql, params);
@@ -355,5 +345,5 @@ abstract public class Model {
 			helper.getReadableDatabase().execSQL(sql);
 		}
 	}
-	
+
 }
