@@ -3,6 +3,10 @@ AlienDroid - ActiveRecord
 
 Install
 ----------
+
+IMPORTANT: We're waiting Sonatype OSS approve our request to deploy AlienDroid artifacts on their public repos. Until there, checkout our source code to your machine and install it locally.
+
+
 If you use Maven, just add these dependency:
 
 	<dependency>
