@@ -23,7 +23,7 @@ Suppose that your project has only one class that you want to map to a table. Le
 		public Integer age;
 	}
 	
-That's is all you need. No annotations are required. Not even configurations. Now, you can simply do:
+That's all you need. No annotations are required. Not even configurations. Now, you can simply do:
 
 	public MyActivity extends RoboActivity {
 	
@@ -74,6 +74,30 @@ If you don't like how we named your database file name (database.sqlite), you ca
 
         <meta-data android:name="DATABASE_NAME" android:value="mydatabase.sqlite"/>
         <meta-data android:name="DATABASE_VERSION" android:value="1"/>
+        
+Events
+-------
+You can observes database events too. Suppose you want to apply some changes to your tables when database's version is changed. 
 
 
+	public MyActivity extends RoboActivity {
 	
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			setContentView(R.layout.main);
+		}
+		
+		public void databaseUpgrade(@Observes DatabaseUpgrade event) {
+			event.getDatabase();
+		}
+		
+		public void databaseCreated(@Observes DatabaseCreated event) {
+			event.getDatabase();
+		}
+	}
+
+
+Relationships
+--------------
+AlienDroid ActiveRecord doesn't implement relationships. 
