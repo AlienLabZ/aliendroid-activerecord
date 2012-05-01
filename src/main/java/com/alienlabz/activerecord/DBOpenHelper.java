@@ -25,7 +25,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.alienlabz.activerecord.event.DatabaseCreated;
-import com.alienlabz.activerecord.event.DatabaseCreation;
+import com.alienlabz.activerecord.event.DatabaseUpgrade;
 import com.alienlabz.util.Dex;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -57,9 +57,6 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(final SQLiteDatabase db) {
-		Ln.d("Firing DatabaseCreation Event.");
-		eventManager.fire(new DatabaseCreation(db));
-
 		Ln.d("Creating Tables.");
 		List<Class<?>> tables = Dex.searchForClass(context, "Model");
 		for (Class<?> table : tables) {
@@ -73,7 +70,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
-		eventManager.fire(new DatabaseCreation(db));
+		eventManager.fire(new DatabaseUpgrade(db, newVersion, oldVersion));
 	}
 
 }

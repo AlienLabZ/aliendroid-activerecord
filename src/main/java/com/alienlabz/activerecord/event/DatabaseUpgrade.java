@@ -25,11 +25,15 @@ import android.database.sqlite.SQLiteDatabase;
  * @author Marlon Silva Carvalho
  * @since 1.0.0
  */
-public class DatabaseCreation {
+public class DatabaseUpgrade {
 	private SQLiteDatabase database;
-
-	public DatabaseCreation(final SQLiteDatabase db) {
+	private int newVersion;
+	private int oldVersion;
+	
+	public DatabaseUpgrade(final SQLiteDatabase db, final int newVersion, int oldVersion) {
 		this.setDatabase(db);
+		this.newVersion = newVersion;
+		this.oldVersion = oldVersion;
 	}
 
 	public SQLiteDatabase getDatabase() {
@@ -39,4 +43,13 @@ public class DatabaseCreation {
 	public void setDatabase(SQLiteDatabase database) {
 		this.database = database;
 	}
+
+	public int getNewVersion() {
+		return newVersion;
+	}
+
+	public int getOldVersion() {
+		return oldVersion;
+	}
+
 }
