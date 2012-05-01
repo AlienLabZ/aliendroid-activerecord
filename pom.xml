@@ -4,7 +4,26 @@
   <artifactId>aliendroid-activerecord</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   
-	<repositories>
+  <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+  </licenses>
+  <url>http://alienlabz.com</url>
+    <issueManagement>
+        <system>GitHub Issue Tracker</system>
+        <url>http://github.com/AlienLabZ/aliendroid-core/issues</url>
+    </issueManagement>
+    <developers>
+        <developer>
+            <id>marlon</id>
+            <name>Marlon Silva Carvalho</name>
+            <email>marlon.carvalho@gmail.com</email>
+        </developer>
+    </developers>
+
+    	<repositories>
 		<repository>
 			<id>google-guice</id>
 			<name>Google Guice</name>

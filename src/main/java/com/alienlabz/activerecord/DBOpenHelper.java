@@ -20,10 +20,8 @@ import java.util.List;
 import roboguice.event.EventManager;
 import roboguice.util.Ln;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.alienlabz.activerecord.event.DatabaseCreated;
@@ -41,27 +39,14 @@ import com.google.inject.Singleton;
 @Singleton
 public class DBOpenHelper extends SQLiteOpenHelper {
 
-	private static String DATABASE_NAME = "database.sqlite";
-	private static int VERSION = 1;
-
 	@Inject
 	private EventManager eventManager;
 
 	private Context context;
 
-	@Inject
-	public DBOpenHelper(final Context context) {
-		super(context, DATABASE_NAME, null, VERSION);
+	public DBOpenHelper(Context context, String name, CursorFactory factory, int version) {
+		super(context, name, factory, version);
 		this.context = context;
-		ApplicationInfo ai;
-		try {
-			ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-			DATABASE_NAME = ai.metaData.getString("DATABASE_NAME");
-			VERSION = ai.metaData.getInt("DATABASE_VERSION");
-		} catch (NameNotFoundException e) {
-			DATABASE_NAME = "database.sqlite";
-			VERSION = 1;
-		}
 	}
 
 	@Override
@@ -88,6 +73,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
+		eventManager.fire(new DatabaseCreation(db));
 	}
 
 }

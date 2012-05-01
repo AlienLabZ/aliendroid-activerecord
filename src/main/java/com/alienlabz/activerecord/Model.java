@@ -96,7 +96,7 @@ abstract public class Model {
 
 		final Field[] fields = Reflection.getNonStaticDeclaredFields(getClass());
 		for (Field field : fields) {
-			if (!isMultiValued(field)) {
+			if (!isMultiValued(field) && !field.isAnnotationPresent(Transient.class)) {
 				values.put(field.getName(), mapper.getValueFromObject(field, this));
 			}
 		}
