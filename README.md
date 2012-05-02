@@ -36,7 +36,7 @@ You need initialize our engine. To do that, create one class that inherits from 
 
 	}
 
-Remeber to inform this class in your AndroidManifest.xml:
+Remember to inform this class in your AndroidManifest.xml:
 
     <application
         android:name=".MyApplication"
@@ -44,7 +44,9 @@ Remeber to inform this class in your AndroidManifest.xml:
         android:label="@string/app_name" >
 	...
 
-Suppose that your project has only one class that you want to map to a table. Let's call this class "Contact":
+### Using AlienDroid!
+
+Now, suppose that your project has only one class that you want to map to a table. Let's call this class "Contact":
 
 	public class Contact extends Model {
 		public String name;
