@@ -24,6 +24,26 @@ If you don't use Maven, just go to our Download section and get [aliendroid-core
 
 Using
 ------
+You need initialize our engine. To do that, create one class that inherits from android.app.Application and execute AlienDroid.init(this) method:
+
+	public class MyApplication extends android.app.Application {
+
+		@Override
+		public void onCreate() {
+			super.onCreate();
+			AlienDroid.init(this);
+		}
+
+	}
+
+Remeber to inform this class in your AndroidManifest.xml:
+
+    <application
+        android:name=".MyApplication"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" >
+	...
+
 Suppose that your project has only one class that you want to map to a table. Let's call this class "Contact":
 
 	public class Contact extends Model {
