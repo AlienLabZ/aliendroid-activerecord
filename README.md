@@ -15,7 +15,7 @@ If you use Maven, just add these dependency:
 		<version>1.0.0</version>
 	</dependency>
 
-If you don't use Maven, just go to our Download section and get aliendroid-core.jar and aliendroid-activerecord.jar. Add those jars to your dependencies in your Android project. You will need RoboGuice and his specifics dependencies too:
+If you don't use Maven, just go to our Download section and get [aliendroid-core.jar](https://github.com/downloads/AlienLabZ/aliendroid-core/aliendroid-core-1.0.0-SNAPSHOT.jar) and [aliendroid-activerecord.jar](https://github.com/downloads/AlienLabZ/aliendroid-activerecord/aliendroid-activerecord-1.0.0-SNAPSHOT.jar). Add those jars to your dependencies in your Android project. You will need RoboGuice and his specifics dependencies too:
 
 1. [RoboGuice 2 Download](http://repo1.maven.org/maven2/org/roboguice/roboguice/2.0/)
 2. [Guice 3 No AOP](http://repo1.maven.org/maven2/com/google/inject/guice/3.0/guice-3.0-no_aop.jar)
