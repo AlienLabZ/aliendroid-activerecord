@@ -15,12 +15,12 @@ If you use Maven, just add these dependency:
 		<version>1.0.0</version>
 	</dependency>
 
-If you don't use Maven, just go to our Download section and get aliendroid-core.jar and aliendroid-activerecord.jar. Add those jars to your dependencies in your Android project. You will need RoboGuice and his specifics dependencies too.
+If you don't use Maven, just go to our Download section and get aliendroid-core.jar and aliendroid-activerecord.jar. Add those jars to your dependencies in your Android project. You will need RoboGuice and his specifics dependencies too:
 
-[RoboGuice 2 Download[(http://repo1.maven.org/maven2/org/roboguice/roboguice/2.0/)
-[Guice 3 No AOP](http://repo1.maven.org/maven2/com/google/inject/guice/3.0/guice-3.0-no_aop.jar)
-[JSR 305](http://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar)
-[javax.inject](http://repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar)
+1. [RoboGuice 2 Download](http://repo1.maven.org/maven2/org/roboguice/roboguice/2.0/)
+2. [Guice 3 No AOP](http://repo1.maven.org/maven2/com/google/inject/guice/3.0/guice-3.0-no_aop.jar)
+3. [JSR 305](http://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar)
+4. [javax.inject](http://repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar)
 
 Using
 ------
