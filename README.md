@@ -3,16 +3,14 @@ AlienDroid - ActiveRecord
 
 Install
 ----------
-
-IMPORTANT: We're waiting Sonatype OSS approve our request to deploy AlienDroid artifacts on their public repos. Until there, checkout our source code to your machine and install it locally.
-
+IMPORTANT: Sorry, we don't have a final version yet. Maybe with your help, we can do that soon. :) Just help us with tests, suggestions, comments and so on. We publish our artifacts at Sonatype Nexus.
 
 If you use Maven, just add these dependency:
 
 	<dependency>
 		<groupId>com.alienlabz</groupId>
 		<artifactId>aliendroid-activerecord</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</dependency>
 
 If you don't use Maven, just go to our Download section and get [aliendroid-core.jar](https://github.com/downloads/AlienLabZ/aliendroid-core/aliendroid-core-1.0.0-SNAPSHOT.jar) and [aliendroid-activerecord.jar](https://github.com/downloads/AlienLabZ/aliendroid-activerecord/aliendroid-activerecord-1.0.0-SNAPSHOT.jar). Add those jars to your dependencies in your Android project. You will need RoboGuice and his specifics dependencies too:
