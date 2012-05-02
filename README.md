@@ -3,6 +3,10 @@ AlienDroid - ActiveRecord
 
 Install
 ----------
+
+IMPORTANT: We're waiting Sonatype OSS approve our request to deploy AlienDroid artifacts on their public repos. Until there, checkout our source code to your machine and install it locally.
+
+
 If you use Maven, just add these dependency:
 
 	<dependency>
@@ -11,7 +15,7 @@ If you use Maven, just add these dependency:
 		<version>1.0.0</version>
 	</dependency>
 
-But if you don't use Maven, just go to our Download section and get aliendroid-core.jar and aliendroid-activerecord.jar. Add those jars to your dependencies in your Android project. You will need RoboGuice and his specifics dependencies too.
+If you don't use Maven, just go to our Download section and get aliendroid-core.jar and aliendroid-activerecord.jar. Add those jars to your dependencies in your Android project. You will need RoboGuice and his specifics dependencies too.
 
 Using
 ------
@@ -40,7 +44,7 @@ That's all you need. No annotations are required. Not even configurations. Now, 
 		}
 	}
 
-So, do you like to know what AlienDroid is doing behind the scenes?
+So, do you want to know what AlienDroid is doing behind the scenes?
 
 1. Creating a database named "database.sqlite".
 2. Creating one table per Model subclass.
@@ -48,7 +52,7 @@ So, do you like to know what AlienDroid is doing behind the scenes?
 
 Queries
 --------
-Now you need to load data from your database. With AlienDroid-ActiveRecord you can do this like:
+To load data from database, just do:
 
 	public MyActivity extends RoboActivity {
 	
@@ -70,7 +74,7 @@ Now you need to load data from your database. With AlienDroid-ActiveRecord you c
 	
 Changing Database Name
 ----------------------
-If you don't like how we named your database file name (database.sqlite), you can change it. Just add those lines to your AndroidManifest file (remember to put it inside <application> tag).
+If you don't like how we named your database file (database.sqlite), you can change it. Just add those lines to your AndroidManifest file (remember to put it inside <application> tag).
 
         <meta-data android:name="DATABASE_NAME" android:value="mydatabase.sqlite"/>
         <meta-data android:name="DATABASE_VERSION" android:value="1"/>
