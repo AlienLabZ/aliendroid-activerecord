@@ -17,6 +17,11 @@ If you use Maven, just add these dependency:
 
 If you don't use Maven, just go to our Download section and get aliendroid-core.jar and aliendroid-activerecord.jar. Add those jars to your dependencies in your Android project. You will need RoboGuice and his specifics dependencies too.
 
+[RoboGuice 2 Download[(http://repo1.maven.org/maven2/org/roboguice/roboguice/2.0/)
+[Guice 3 No AOP](http://repo1.maven.org/maven2/com/google/inject/guice/3.0/guice-3.0-no_aop.jar)
+[JSR 305](http://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar)
+[javax.inject](http://repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar)
+
 Using
 ------
 Suppose that your project has only one class that you want to map to a table. Let's call this class "Contact":
