@@ -3,7 +3,6 @@ package com.alienlabz.activerecord.module;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.alienlabz.activerecord.DBOpenHelper;
 import com.alienlabz.annotation.Module;
@@ -32,11 +31,10 @@ public class ActiveRecordModule extends AbstractModule {
 			ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
 			dbname = ai.metaData.getString("DATABASE_NAME");
 			version = ai.metaData.getInt("DATABASE_VERSION");
-		} catch (NameNotFoundException e) {
+		} catch (Throwable e) {
 			dbname = "database.sqlite";
 			version = 1;
 		}
-
 		DBOpenHelper h = new DBOpenHelper(context, dbname, null, version);
 		Beans.getInjector().injectMembers(h);
 		return h;

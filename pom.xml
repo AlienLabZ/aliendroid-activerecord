@@ -10,11 +10,14 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
   </licenses>
+  
   <url>http://alienlabz.com</url>
+  
     <issueManagement>
         <system>GitHub Issue Tracker</system>
         <url>http://github.com/AlienLabZ/aliendroid-core/issues</url>
     </issueManagement>
+    
     <developers>
         <developer>
             <id>marlon</id>
@@ -23,7 +26,7 @@
         </developer>
     </developers>
 
-    	<repositories>
+    <repositories>
 		<repository>
 			<id>google-guice</id>
 			<name>Google Guice</name>
