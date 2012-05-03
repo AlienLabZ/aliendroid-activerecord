@@ -23,6 +23,7 @@ import java.util.Map;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.alienlabz.annotation.Transient;
 import com.alienlabz.util.Beans;
@@ -36,6 +37,7 @@ import com.alienlabz.util.Reflection;
  * @since 1.0.0
  */
 abstract public class Model {
+	private static String Lock = "dblock";
 
 	public Integer _id;
 
@@ -60,13 +62,17 @@ abstract public class Model {
 	}
 
 	public void load(final Integer id) {
-		final Cursor cursor = getHelper().getReadableDatabase().query(getTableName(),
-				Reflection.getNonStaticDeclaredFieldsNames(this.getClass()), "_id=?", new String[] { id.toString() },
-				null, null, null);
-		if (cursor.moveToFirst()) {
-			transform(cursor);
+		synchronized (Lock) {
+			SQLiteDatabase database = getHelper().getReadableDatabase();
+			final Cursor cursor = database.query(getTableName(),
+					Reflection.getNonStaticDeclaredFieldsNames(this.getClass()), "_id=?",
+					new String[] { id.toString() }, null, null, null);
+			if (cursor.moveToFirst()) {
+				transform(cursor);
+			}
+			cursor.close();
+			database.close();
 		}
-		cursor.close();
 	}
 
 	public static <T extends Model> T findFirst(final Class<T> cls, final String query, final String... params) {
@@ -82,7 +88,7 @@ abstract public class Model {
 		final String tableName = Reflection.getSimpleClassName(cls);
 		final List<T> list = Model.where(cls, "_id=(select max(_id) from " + tableName + ")");
 		T model = null;
-		if (list!= null && list.size() > 0) {
+		if (list != null && list.size() > 0) {
 			model = list.iterator().next();
 		}
 		return model;
@@ -112,11 +118,14 @@ abstract public class Model {
 		}
 
 		final String tableName = getTableName();
-		final DBOpenHelper helper = getHelper();
-		if (_id != null) {
-			helper.getWritableDatabase().update(tableName, values, "_id=?", new String[] { _id.toString() });
-		} else {
-			helper.getWritableDatabase().insertOrThrow(tableName, null, values);
+		synchronized (Lock) {
+			SQLiteDatabase database = getHelper().getWritableDatabase();
+			if (_id != null) {
+				database.update(tableName, values, "_id=?", new String[] { _id.toString() });
+			} else {
+				database.insertOrThrow(tableName, null, values);
+			}
+			database.close();
 		}
 	}
 
@@ -124,7 +133,11 @@ abstract public class Model {
 	 * Delete the model from database.
 	 */
 	public void delete() {
-		getHelper().getWritableDatabase().delete(getTableName(), "_id=?", new String[] { _id.toString() });
+		synchronized (Lock) {
+			SQLiteDatabase database = getHelper().getReadableDatabase();
+			database.delete(getTableName(), "_id=?", new String[] { _id.toString() });
+			database.close();
+		}
 	}
 
 	/**
@@ -180,15 +193,19 @@ abstract public class Model {
 			sql.append(query);
 		}
 
-		final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
-		final Cursor cursor = helper.getReadableDatabase().rawQuery(sql.toString(), params);
-		while (cursor.moveToNext()) {
-			T model = Reflection.instantiate(cls);
-			model.transform(cursor);
-			result.add(model);
+		synchronized (Lock) {
+			final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
+			SQLiteDatabase database = helper.getReadableDatabase();
+			final Cursor cursor = database.rawQuery(sql.toString(), params);
+			while (cursor.moveToNext()) {
+				T model = Reflection.instantiate(cls);
+				model.transform(cursor);
+				result.add(model);
+			}
+			cursor.close();
+			database.close();
 		}
 
-		cursor.close();
 		return result;
 	}
 
@@ -215,13 +232,16 @@ abstract public class Model {
 			sql.append(query);
 		}
 
-		final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
-		final Cursor cursor = helper.getReadableDatabase().rawQuery(sql.toString(), params);
-		if (cursor.moveToNext()) {
-			result = cursor.getInt(0);
+		synchronized (Lock) {
+			final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
+			SQLiteDatabase database = helper.getReadableDatabase();
+			final Cursor cursor = database.rawQuery(sql.toString(), params);
+			if (cursor.moveToNext()) {
+				result = cursor.getInt(0);
+			}
+			cursor.close();
+			database.close();
 		}
-
-		cursor.close();
 		return result;
 	}
 
@@ -329,15 +349,20 @@ abstract public class Model {
 
 		final List<T> result = new ArrayList<T>();
 
-		final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
-		final Cursor cursor = helper.getReadableDatabase().rawQuery(sql, params);
-		while (cursor.moveToNext()) {
-			T model = Reflection.instantiate(cls);
-			model.transform(cursor);
-			result.add(model);
-		}
+		synchronized (Lock) {
+			final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
+			SQLiteDatabase database = helper.getReadableDatabase();
 
-		cursor.close();
+			final Cursor cursor = database.rawQuery(sql, params);
+			while (cursor.moveToNext()) {
+				T model = Reflection.instantiate(cls);
+				model.transform(cursor);
+				result.add(model);
+			}
+
+			cursor.close();
+			database.close();
+		}
 		return result;
 	}
 
@@ -348,11 +373,17 @@ abstract public class Model {
 	 * @param params	optional arguments
 	 */
 	public static void executeSQL(final String sql, final Object... params) {
-		final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
-		if (params != null && params.length > 0) {
-			helper.getReadableDatabase().execSQL(sql, params);
-		} else {
-			helper.getReadableDatabase().execSQL(sql);
+		synchronized (Lock) {
+			final DBOpenHelper helper = Beans.getBean(DBOpenHelper.class);
+			SQLiteDatabase database = helper.getReadableDatabase();
+
+			if (params != null && params.length > 0) {
+				database.execSQL(sql, params);
+			} else {
+				database.execSQL(sql);
+			}
+
+			database.close();
 		}
 	}
 
