@@ -61,6 +61,10 @@ abstract public class Model {
 		return Beans.getBean(ColumnMapper.class);
 	}
 
+	public static <T extends Model> T load(final Class<T> cls, final Integer id) {
+		return findFirst(cls, "_id=?", new String[] { id.toString() });
+	}
+
 	public void load(final Integer id) {
 		synchronized (Lock) {
 			SQLiteDatabase database = getHelper().getReadableDatabase();
