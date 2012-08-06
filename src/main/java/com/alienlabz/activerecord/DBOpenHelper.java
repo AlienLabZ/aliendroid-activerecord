@@ -17,7 +17,6 @@ package com.alienlabz.activerecord;
 
 import java.util.List;
 
-import roboguice.event.EventManager;
 import roboguice.util.Ln;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,8 +25,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.alienlabz.activerecord.event.DatabaseCreated;
 import com.alienlabz.activerecord.event.DatabaseUpgrade;
+import com.alienlabz.util.Beans;
 import com.alienlabz.util.Dex;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 /**
@@ -39,20 +38,11 @@ import com.google.inject.Singleton;
 @Singleton
 public class DBOpenHelper extends SQLiteOpenHelper {
 
-	@Inject
-	private EventManager eventManager;
-
 	private Context context;
 
 	public DBOpenHelper(Context context, String name, CursorFactory factory, int version) {
 		super(context, name, factory, version);
 		this.context = context;
-	}
-
-	@Override
-	public void onOpen(final SQLiteDatabase db) {
-		Ln.d("Opening database named [" + db.getPath() + "]");
-		super.onOpen(db);
 	}
 
 	@Override
@@ -65,12 +55,12 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 		}
 
 		Ln.d("Firing DatabaseCreated Event.");
-		eventManager.fire(new DatabaseCreated(db));
+		Beans.getEventManager().fire(new DatabaseCreated(db));
 	}
 
 	@Override
 	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
-		eventManager.fire(new DatabaseUpgrade(db, newVersion, oldVersion));
+		Beans.getEventManager().fire(new DatabaseUpgrade(db, newVersion, oldVersion));
 	}
 
 }

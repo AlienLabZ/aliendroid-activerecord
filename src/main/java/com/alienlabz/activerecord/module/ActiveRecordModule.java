@@ -6,14 +6,14 @@ import android.content.pm.PackageManager;
 
 import com.alienlabz.activerecord.DBOpenHelper;
 import com.alienlabz.annotation.Module;
-import com.alienlabz.util.Beans;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 @Module
 public class ActiveRecordModule extends AbstractModule {
+	private static DBOpenHelper dbOpenHelper;
 	private Context context;
-
+	
 	public ActiveRecordModule(final Context context) {
 		this.context = context;
 	}
@@ -24,6 +24,10 @@ public class ActiveRecordModule extends AbstractModule {
 
 	@Provides
 	public DBOpenHelper provideDbOpenHelper() {
+		if (dbOpenHelper != null) {
+			return dbOpenHelper;
+		}
+
 		ApplicationInfo ai;
 		String dbname;
 		int version;
@@ -35,9 +39,8 @@ public class ActiveRecordModule extends AbstractModule {
 			dbname = "database.sqlite";
 			version = 1;
 		}
-		DBOpenHelper h = new DBOpenHelper(context, dbname, null, version);
-		Beans.getInjector().injectMembers(h);
-		return h;
+		dbOpenHelper = new DBOpenHelper(context, dbname, null, version);
+		return dbOpenHelper;
 	}
 
 }
